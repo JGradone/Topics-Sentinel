@@ -19,10 +19,11 @@ Everything here runs in **Google Colab** in your web browser. You don't need to 
 
 | # | Notebook | What you'll do |
 |---|---|---|
-| 1 | **Intro to Python and gliders**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_1_Intro_to_Python_and_Gliders.ipynb) | Python crash course (math, variables, strings, lists, NumPy arrays), then download your first Redwing data from ERDDAP with `load_glider_data()`, look at it with `pandas`, and make your first plots |
-| 2 | **Redwing glider data deep dive**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_2_Redwing_Glider_Data.ipynb) | Download Redwing's whole mission. **Engineering:** buoyancy engine, pitch, battery, vacuum, currents. **Science:** profiles, depth–time sections, T–S diagrams, dive vs. climb (thermal lag). Ends with group exercises |
+| 1 | **Intro to Python and gliders**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_1_Intro_to_Python_and_Gliders.ipynb) | Python crash course (math, variables, strings, lists, NumPy arrays), then download three days of Redwing data from ERDDAP with `load_glider_data()`, look at it with `pandas`, and make your first plots |
+| 2 | **Redwing engineering data**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_2_Redwing_Engineering.ipynb) | How the glider flies: buoyancy engine, pitch, heading and fin (measured vs. commanded), vertical speed over the mission. Glider health: vacuum and battery. The ocean currents it fought. Ends with group exercises |
+| 3 | **Redwing science data**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_3_Redwing_Science.ipynb) | What the CTD measured: quality-control flags, whole-mission temperature/salinity/density sections, the Gulf Stream front, T–S diagrams and water masses, and dive vs. climb (sensor thermal lag). Ends with group exercises |
 
-Do Activity 1 first. Activity 2 uses the same `load_glider_data()` function and builds on what you learned.
+Do Activity 1 first. Activities 2 and 3 can be done in either order (or by different groups at the same time). All three use exactly the same `load_glider_data()` function.
 
 ---
 
@@ -50,9 +51,20 @@ Slocum variable names start with a prefix that tells you where they come from:
 Watch the units. Angles (`m_pitch`, `m_heading`) are in **radians**, `sci_water_pressure` is in **bar** (×10 for decibars ≈ metres), and `sci_water_cond` is in **S/m** (×10 for mS/cm, which is what `gsw` expects).
 
 ### Where the data come from
-Both notebooks pull data live from the [Rutgers glider ERDDAP server](https://slocum-data.marine.rutgers.edu/erddap/), so there are no files to download. Redwing's dataset ID is `redwing-20251011T1511-trajectory-raw-rt`, and you can browse every variable [here](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-trajectory-raw-rt.html).
+All three notebooks pull data live from the [Rutgers glider ERDDAP server](https://slocum-data.marine.rutgers.edu/erddap/), so there are no files to download.
 
-`load_glider_data()` works for **any** glider on that server. Give it a different `dataset_id` to try another one.
+During a mission a glider only sends a small sample of its data home by satellite (**real-time** data). We use the **delayed-mode** data: the complete files stored on the glider, with every measurement (about one per second), processed after they were retrieved. Redwing has two delayed-mode datasets:
+
+| Name in the code | Dataset ID | What's in it | Used in |
+|---|---|---|---|
+| `ENGINEERING_ID` | [`redwing-20251011T1511-trajectory-raw-delayed`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-trajectory-raw-delayed.html) | everything the glider logged: flight data plus raw CTD, Oct 2025 – May 2026 | Activities 1 and 2 |
+| `SCIENCE_ID` | [`redwing-20251011T1511-profile-sci-delayed`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-profile-sci-delayed.html) | processed CTD profiles with salinity, density and QARTOD quality flags, Oct 2025 – Jan 2026 | Activity 3 |
+
+The delayed-mode engineering files don't include the battery variables, so Activity 2 gets those from the real-time dataset, [`redwing-20251011T1511-trajectory-raw-rt`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-trajectory-raw-rt.html).
+
+Because the full-resolution data are millions of rows, the notebooks use ERDDAP **server-side filters** through `load_glider_data(..., filters=[...])`. For example, `'m_depth!=NaN'` keeps only rows with a depth, and `'orderByMean("profile_id,pressure/5")'` averages each profile into 5 dbar bins before sending it.
+
+`load_glider_data()` works for **any** glider on that server. Give it a different dataset ID to try another one.
 
 ---
 
@@ -63,8 +75,8 @@ Colab already includes `numpy`, `pandas`, and `matplotlib`. The first code cell 
 | Package | What it's for |
 |---|---|
 | [`erddapy`](https://ioos.github.io/erddapy/) | Requesting data from ERDDAP servers |
-| [`gsw`](https://teos-10.github.io/GSW-Python/) | Seawater properties (salinity, density) using TEOS-10 (Activity 2) |
-| [`cmocean`](https://matplotlib.org/cmocean/) | Colormaps made for oceanography (`thermal`, `haline`, `dense`, ...) (Activity 2) |
+| [`cmocean`](https://matplotlib.org/cmocean/) | Colormaps made for oceanography (`thermal`, `haline`, `dense`, ...) (Activities 2 and 3) |
+| [`gsw`](https://teos-10.github.io/GSW-Python/) | Seawater properties (density, conservative temperature) using TEOS-10 (Activity 3) |
 
 ---
 
@@ -83,10 +95,13 @@ Colab already includes `numpy`, `pandas`, and `matplotlib`. The first code cell 
 
 ## Ideas for projects
 
-* Pick any glider on the [Rutgers ERDDAP server](https://slocum-data.marine.rutgers.edu/erddap/tabledap/index.html) and run Activity 2 on it.
+* Pick any glider on the [Rutgers ERDDAP server](https://slocum-data.marine.rutgers.edu/erddap/tabledap/index.html) and run Activities 2 and 3 on it.
 * Use Redwing's battery data to estimate how long a full-depth mission can last.
 * Map where Redwing met the strongest currents and compare with the Gulf Stream's position.
 * Measure CTD thermal lag by comparing dive and climb profiles. When does it matter most?
+* Track the mixed layer deepening from fall into winter.
+* Map how thick the Eighteen Degree Water layer was along the track.
+* Compare real-time and delayed-mode data for the same day. What did the glider leave out?
 * Compare Redwing's near-surface temperature with satellite sea surface temperature, for example NOAA's [Blended SST](https://coastwatch.noaa.gov/erddap/griddap/noaacwBLENDEDsstDNDaily.html), which is also on ERDDAP.
 
 ---
@@ -95,7 +110,8 @@ Colab already includes `numpy`, `pandas`, and `matplotlib`. The first code cell 
 
 ```
 Activity_1_Intro_to_Python_and_Gliders.ipynb   Python basics + first Redwing data
-Activity_2_Redwing_Glider_Data.ipynb           Redwing engineering + science deep dive
+Activity_2_Redwing_Engineering.ipynb           How Redwing flew, its health, and the currents it met
+Activity_3_Redwing_Science.ipynb               What Redwing's CTD measured in the ocean
 README.md                                      This guide
 ```
 
