@@ -21,7 +21,7 @@ Everything here runs in **Google Colab** in your web browser. You don't need to 
 |---|---|---|
 | 1 | **Intro to Python and gliders**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_1_Intro_to_Python_and_Gliders.ipynb) | Python crash course (math, variables, strings, lists, NumPy arrays), then download three days of Redwing data from ERDDAP with `load_glider_data()`, look at it with `pandas`, and make your first plots |
 | 2 | **Redwing engineering data**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_2_Redwing_Engineering.ipynb) | How the glider flies: buoyancy engine, pitch, heading and fin (measured vs. commanded), vertical speed over the mission. Glider health: vacuum and battery. The ocean currents it fought. Ends with group exercises |
-| 3 | **Redwing science data**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_3_Redwing_Science.ipynb) | What the CTD measured: quality-control flags, whole-mission temperature/salinity/density sections, the Gulf Stream front, T–S diagrams and water masses, and dive vs. climb (sensor thermal lag). Ends with group exercises |
+| 3 | **Redwing science data**<br>[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/JGradone/Topics-Sentinel/blob/main/Activity_3_Redwing_Science.ipynb) | What the CTD measured: whole-mission temperature/salinity/density sections, the Gulf Stream front, T–S diagrams and water masses, and dive vs. climb (sensor thermal lag). Ends with group exercises |
 
 Do Activity 1 first. Activities 2 and 3 can be done in either order (or by different groups at the same time). All three use exactly the same `load_glider_data()` function.
 
@@ -58,7 +58,7 @@ During a mission a glider only sends a small sample of its data home by satellit
 | Name in the code | Dataset ID | What's in it | Used in |
 |---|---|---|---|
 | `ENGINEERING_ID` | [`redwing-20251011T1511-trajectory-raw-delayed`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-trajectory-raw-delayed.html) | everything the glider logged: flight data plus raw CTD, Oct 2025 – May 2026 | Activities 1 and 2 |
-| `SCIENCE_ID` | [`redwing-20251011T1511-profile-sci-delayed`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-profile-sci-delayed.html) | processed CTD profiles with salinity, density and QARTOD quality flags, Oct 2025 – Jan 2026 | Activity 3 |
+| `SCIENCE_ID` | [`redwing-20251011T1511-profile-sci-delayed`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-profile-sci-delayed.html) | processed CTD profiles with salinity and density, Oct 2025 – Jan 2026 | Activity 3 |
 
 The delayed-mode engineering files don't include the battery variables, so Activity 2 gets those from the real-time dataset, [`redwing-20251011T1511-trajectory-raw-rt`](https://slocum-data.marine.rutgers.edu/erddap/tabledap/redwing-20251011T1511-trajectory-raw-rt.html).
 
